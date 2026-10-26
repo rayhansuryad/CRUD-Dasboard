@@ -123,7 +123,7 @@ app.post("/api/products",async (req, res) => {
   app.delete('/api/products/:id', async (req,res) =>{
     try {
         const [result] = await db.execute(
-            'DELETE FROM products WHERE id = ?', parseInt[req.params.id]
+            'DELETE FROM products WHERE id = ?', [req.params.id]
         );
 
         if (result.affectedRows === 0){

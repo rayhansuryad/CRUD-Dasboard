@@ -1,7 +1,5 @@
 import { useEffect, useState } from "react";
 import "./App.css";
-import { escape } from "../../backend/config/db";
-import { version } from "react";
 
 const API_URL = "http://localhost:5000/api/products";
 
@@ -19,7 +17,7 @@ function App() {
   const [search, setSearch] = useState(""); //teks pencarian
   const [loading, setLoading] = useState(true); //Data masih di muat
   const [saving, setSaving] = useState(false); // menyimpan data
-  const [error, setError] = useState("");   // pesan kesalahan/error
+  const [error, setError] = useState(""); // pesan kesalahan/error
   const [notice, setNotice] = useState(""); //pesan berhasil
 
   async function fetchProducts() {
@@ -61,12 +59,12 @@ function App() {
     setError();
     setNotice();
 
-    const price = Number(form.price);
-    const stock = Number(form.stock);
+    const price = Number(from.price);
+    const stock = Number(from.stock);
 
     if (
-      !form.name.trim() ||
-      form.price === "" ||
+      !from.name.trim() ||
+      from.price === "" ||
       from.stock === "" ||
       !Number.isFinite(price) ||
       !Number.isFinite(stock) ||
@@ -79,7 +77,7 @@ function App() {
     setSaving(true);
 
     try {
-      const isEditing = editingId !== null;   
+      const isEditing = editingId !== null;
 
       const response = await fetch(
         isEditing ? `${API_URL}/${editingId}` : API_URL,
@@ -89,8 +87,8 @@ function App() {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            name: form.name.trim(),
-            description: form.description,
+            name: from.name.trim(),
+            description: from.description,
             price,
             stock,
           }),
@@ -103,7 +101,7 @@ function App() {
       }
       setForm(initialForm);
       setEditingId(null);
-      setNotice(resuult.message);
+      setNotice(result.message);
       await fetchProducts();
     } catch (err) {
       setError(err.message);
@@ -179,9 +177,9 @@ function App() {
     0,
   );
 
-  const inventoryValue = product.reduce((total, product) => {
-    (total + Number(product.price) * Number(product.stock), 0);
-  });
+  const inventoryValue = products.reduce((total, product) => {
+    return total + Number(product.price) * Number(product.stock);
+  }, 0);
 
   const formatRupiah = (value) =>
     new Intl.NumberFormat("id-ID", {
@@ -290,18 +288,18 @@ function App() {
             <input
               id="name"
               name="name"
-              value={form.name}
+              value={from.name ?? ""}
               onChange={handleChange}
               placeholder="Contoh: Kaos Basic"
               maxLength={150}
-              require
+              required
             />
 
             <label htmlFor="description">Deskripsi</label>
             <textarea
               id="description"
               name="description"
-              value={form.description}
+              value={from.description}
               onChange={handleChange}
               placeholder="Jelaskan produk kamu..."
               rows={3}
@@ -316,7 +314,7 @@ function App() {
                   typeof="number"
                   min="0"
                   step="0.01"
-                  value={form.price}
+                  value={from.price}
                   onChange={handleChange}
                   placeholder="75000"
                   required
@@ -331,7 +329,7 @@ function App() {
                   typeof="number"
                   min="0"
                   step="1"
-                  value={form.stock}
+                  value={from.stock}
                   onChange={handleChange}
                   placeholder="20"
                   required
@@ -347,7 +345,7 @@ function App() {
                   : "+ tambah Produk"}
             </button>
 
-            {editingId !== nuill && (
+            {editingId !== null && (
               <button
                 type="button"
                 className="secondary-button"
@@ -394,28 +392,26 @@ function App() {
                     {product.name.charAt(0).toUpperCase()}
                   </div>
                   <div className="product-info">
-                    <h3>{prpoduct.name}</h3>
+                    <h3>{product.name}</h3>
                     <p>{product.description || "Tanpa Deskripsi"}</p>
                     <strong>{formatRupiah(Number(product.price))}</strong>
-                    <span className="stock-label">
-                      Stok : {product.stock}
-                    </span>
+                    <span className="stock-label">Stok : {product.stock}</span>
                   </div>
 
                   <div className="product-actions">
                     <button
-                    className="icon-button edit-button"
-                    onClick={()=> handleEdit(product.name)}
-                    aria-label={`Edit ${product.name}`}
-                    title="Edit Produk"
+                      className="icon-button edit-button"
+                      onClick={() => handleEdit(product.name)}
+                      aria-label={`Edit ${product.name}`}
+                      title="Edit Produk"
                     >
                       ✎
                     </button>
                     <button
-                    className="icon-button delete-button"
-                    onClick={()=> handleDelete(product.id)}
-                    aria-label={`Hapus ${product.name}`}
-                    title="Hapus Produk"
+                      className="icon-button delete-button"
+                      onClick={() => handleDelete(product.id)}
+                      aria-label={`Hapus ${product.name}`}
+                      title="Hapus Produk"
                     >
                       ×
                     </button>
@@ -431,8 +427,8 @@ function App() {
       </section>
 
       <footer className="footer">
-          <span>PRODUCTSPACE © Rayhansuryad2026 </span>
-          <span>Built With React + Express + MySQL</span>
+        <span>PRODUCTSPACE © Rayhansuryad2026 </span>
+        <span>Built With React + Express + MySQL</span>
       </footer>
     </main>
   );
